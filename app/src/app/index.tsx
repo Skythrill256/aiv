@@ -1,10 +1,11 @@
 
+
 import { StyleSheet, View } from "react-native";
 import { WagmiProvider } from 'wagmi'
 import { polygonAmoy, polygonZkEvm } from '@wagmi/core/chains'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createAppKit, defaultWagmiConfig, AppKit } from '@reown/appkit-wagmi-react-native'
-import { ConnectWallet } from './src/Components/ConnectWallet'
+import { ConnectWallet } from '../Components/ConnectWallet'
 
 const queryClient = new QueryClient()
 

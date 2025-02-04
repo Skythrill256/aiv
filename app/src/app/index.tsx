@@ -1,5 +1,5 @@
 
-
+import Image from "expo/image";
 import { StyleSheet, View } from "react-native";
 import { WagmiProvider } from 'wagmi'
 import { polygonAmoy, polygonZkEvm } from '@wagmi/core/chains'

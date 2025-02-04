@@ -6,15 +6,13 @@ import {Storage} from "../storage/storage.sol";
 import {IHook} from "../interfaces/IHook.sol";
 import {SafeCast} from "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
-contract DefaultVote is IVote, Storage {
+contract AppealContract is IVote, Storage {
     using SafeCast for int128;
 
     constructor(address _hook) {
         _setHook(_hook);
     }
 
-    /// @notice Creates a new appeal.
-    /// @dev Reverts if the provided startTime is in the past.
     function createAppeal(
         createAppealParams calldata params
     ) external override returns (uint256 appealId) {
@@ -22,9 +20,7 @@ contract DefaultVote is IVote, Storage {
             revert startTimeInPast();
         }
         if (address(hook) != address(0)) {
-            // Call the hook (if registered) before appeal creation.
-            // If you prefer renaming these hook calls, update your hook interface.
-            IHook(hook).beforeProposalCreation(msg.sender, params.hookData);
+            IHook(hook).beforeAppealCreated(msg.sender, params.hookData);
         }
 
         IVote.Appeal memory appeal = IVote.Appeal({
@@ -44,7 +40,7 @@ contract DefaultVote is IVote, Storage {
         appealCount++;
 
         if (address(hook) != address(0)) {
-            IHook(hook).afterProposalCreation(msg.sender, appealId, "");
+            IHook(hook).afterAppealCreated(msg.sender, appealId, "");
         }
 
         emit AppealCreated(
@@ -58,15 +54,13 @@ contract DefaultVote is IVote, Storage {
         );
     }
 
-    /// @notice Casts a vote on an appeal.
-    /// @dev The vote weight can be positive (for) or negative (against).
     function castVote(casteVoteParams calldata params) external override {
-        int256 weightDelta = params.weight;
+        int128 weightDelta = int128(params.weight);
         if (address(hook) != address(0)) {
             weightDelta = IHook(hook).beforeVoteCast(
                 msg.sender,
                 params.appealId,
-                params.weight,
+                weightDelta,
                 params.hookData
             );
         }
@@ -79,29 +73,27 @@ contract DefaultVote is IVote, Storage {
             revert VotingEnded();
         }
 
-        // Update the appropriate score based on the weight direction.
         if (weightDelta > 0) {
-            appeal.forScore += int128(weightDelta);
+            appeal.forScore += weightDelta;
         } else {
-            appeal.againstScore += int128(weightDelta);
+            appeal.againstScore += weightDelta;
         }
 
         if (address(hook) != address(0)) {
             IHook(hook).afterVoteCast(
                 msg.sender,
                 params.appealId,
-                weightDelta,
+                int256(weightDelta),
                 ""
             );
         }
 
-        emit voteCast(params.appealId, msg.sender, weightDelta);
+        emit voteCast(params.appealId, msg.sender, int256(weightDelta));
     }
 
-    /// @notice Executes an appeal if its voting period is over and the execution window is open.
     function executeAppeal(uint256 appealId) external override {
         if (address(hook) != address(0)) {
-            IHook(hook).beforeProposalExecution(msg.sender, appealId);
+            IHook(hook).beforeAppealExecution(msg.sender, appealId);
         }
         IVote.Appeal storage appeal = appeals[appealId];
         uint256 _executionDelay = executionDelay();
@@ -122,13 +114,12 @@ contract DefaultVote is IVote, Storage {
         appeal.executed = true;
 
         if (address(hook) != address(0)) {
-            IHook(hook).afterProposalExecution(msg.sender, appealId, true);
+            IHook(hook).afterAppealExecution(msg.sender, appealId, true);
         }
 
         emit AppealExecuted(appealId);
     }
 
-    /// @notice Returns the allowed voting period range.
     function votingPeriodRange()
         external
         pure
@@ -138,12 +129,10 @@ contract DefaultVote is IVote, Storage {
         return (1 days, 30 days);
     }
 
-    /// @notice Returns the delay after the voting period before execution is allowed.
     function executionDelay() public pure override returns (uint256) {
         return 1 days;
     }
 
-    /// @notice Returns the duration of the execution window.
     function executionWindow() public pure override returns (uint256) {
         return 1 days;
     }

@@ -8,6 +8,7 @@
 #![no_main]
 sp1_zkvm::entrypoint!(main);
 
+
 use alloy_sol_types::SolType;
 use fibonacci_lib::{fibonacci, PublicValuesStruct};
 

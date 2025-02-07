@@ -1,11 +1,12 @@
 
-import Image from "expo/image";
-import { StyleSheet, View } from "react-native";
+import { Image } from 'expo-image';
+import { StyleSheet, TouchableOpacity, View,Text } from "react-native";
 import { WagmiProvider } from 'wagmi'
 import { polygonAmoy, polygonZkEvm } from '@wagmi/core/chains'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createAppKit, defaultWagmiConfig, AppKit } from '@reown/appkit-wagmi-react-native'
 import { ConnectWallet } from '../Components/ConnectWallet'
+import { router } from "expo-router";
 
 const queryClient = new QueryClient()
 
@@ -39,6 +40,14 @@ export default function App() {
       <QueryClientProvider client={queryClient}>
         <View style={styles.centerContainer}>
           <ConnectWallet />
+          <TouchableOpacity 
+            className="bg-indigo-600 px-6 py-3 rounded-lg mt-4 active:bg-indigo-700"
+            onPress={() => router.push("/landing")}
+          >
+           <Text style={{ color: "white", fontWeight: "600", fontSize: 16 }}>
+  Go to Home
+</Text>
+          </TouchableOpacity>
         </View>
         <AppKit />
       </QueryClientProvider>

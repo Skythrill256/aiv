@@ -1,6 +1,6 @@
-
 import { ponder } from "ponder:registry";
 import schema from "ponder:schema";
+import { sendMessage } from "./api";
 
 ponder.on("AppealContract:AppealCreated", async ({ event, context }) => {
   try {
@@ -30,10 +30,12 @@ ponder.on("AppealContract:AppealCreated", async ({ event, context }) => {
     }
 
     console.log(`AppealCreated processed successfully: ${appealId}`);
+    sendMessage(`New appeal created: ${appealId}`);
   } catch (error) {
     console.error("Error handling AppealCreated event:", error);
   }
 });
+
 
 ponder.on("AppealContract:voteCast", async ({ event, context }) => {
 
@@ -83,6 +85,7 @@ ponder.on("AppealContract:voteCast", async ({ event, context }) => {
     }
 
     console.log(`VoteCast processed and written successfully: ${appealId}`);
+    sendMessage(`New vote cast on appeal ${appealId} by ${voter}`);
   } catch (error) {
     console.error("Error handling VoteCast event:", error);
   }
@@ -100,6 +103,7 @@ ponder.on("AppealContract:AppealExecuted", async ({ event, context }) => {
       .set({ executed: true });
 
     console.log(`ProposalExecuted processed successfully: ${appealId}`);
+    sendMessage(`Appeal ${appealId} has been executed`);
   } catch (error) {
     console.error("Error handling ProposalExecuted event:", error);
   }

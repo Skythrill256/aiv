@@ -1,32 +1,29 @@
-import { router } from "expo-router";
-import React from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
-import CustomButton from "../../Components/CustomButton";
+import React, { useState } from 'react';
+import { SafeAreaView, View } from 'react-native';
+import 'nativewind';
+import BottomNavigation from '../../Components/BottomNavigation';
+import VotingScreen from './VotingScreen';
+import ProfileScreen from './ProfileScreen';
+import AnotherScreen from './AnotherScreen';
 
-const HomeScreen: React.FC = () => {
+export default function App() {
+  const [selectedTab, setSelectedTab] = useState('center');
+
+  let Content;
+  if (selectedTab === 'left') {
+    Content = <AnotherScreen />;
+  } else if (selectedTab === 'center') {
+    Content = <VotingScreen />;
+  } else if (selectedTab === 'right') {
+    Content = <ProfileScreen />;
+  }
+
   return (
-    <View className="flex-1 bg-black items-center justify-center px-5">
-      <Image
-        source={require("../../../assets/favicon.png")} // Replace with your actual image
-        className="w-32 h-32 rounded-full mb-6"
-      />
-
-      <Text className="text-white text-4xl font-bold mb-2">
-        Voting <Text className="text-pink-500">APP</Text>
-      </Text>
-
-      {/* Description */}
-      <Text className="text-center text-white text-xl mb-8">
-        <Text className="text-pink-500 font-bold">Zero Knowledge Proof</Text>{" "}
-        BlockChain Application where users can{" "}
-        <Text className="text-pink-500 font-bold">vote</Text> for different
-        events.
-      </Text>
-
-      <CustomButton title="Register" onPress={() => console.log('Register Pressed')} />
-
-    </View>
+    <SafeAreaView className="flex-1 bg-black">
+      <View className="flex-1 bg-black ">
+        {Content}
+        <BottomNavigation selected={selectedTab} onSelect={setSelectedTab} />
+      </View>
+    </SafeAreaView>
   );
-};
-
-export default HomeScreen;
+}

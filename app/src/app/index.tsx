@@ -42,7 +42,7 @@ export default function App() {
           <ConnectWallet />
           <TouchableOpacity 
             className="bg-indigo-600 px-6 py-3 rounded-lg mt-4 active:bg-indigo-700"
-            onPress={() => router.push("/home")}
+            onPress={() => router.push("/landing")}
           >
            <Text style={{ color: "white", fontWeight: "600", fontSize: 16 }}>
   Go to Home

@@ -27,7 +27,7 @@ const CustomTextField: React.FC<TextFieldProps> = ({ placeholder, type, secureTe
   const getKeyboardType = () => (type === 'aadhar' ? 'numeric' : 'default');
 
   return (
-    <View className="w-full mb-3 flex-row items-center bg-[#26242E] rounded-md px-4 py-2 h-16">
+    <View className="w-full mb-3 flex-row items-center bg-[#26242E] rounded-2xl px-4 py-2 h-16">
       <TextInput
         className="flex-1 text-white text-lg h-full leading-none"
         placeholder={placeholder}
